@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cursor</title>
+    <link rel="stylesheet" href="ui.css" />
+  </head>
+  <body>
+    <header class="top">
+      <span class="mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="18" height="18">
+          <path fill="currentColor" d="M4 2 L4 18 L9 14 L13 22 L16 20 L12 13 L19 13 Z"></path>
+        </svg>
+      </span>
+      <div>
+        <h1>Cursor</h1>
+        <p class="status"><span id="status-dot"></span><span id="status">Not connected</span></p>
+      </div>
+    </header>
+    <p id="detail" class="detail"></p>
+
+    <section id="setup" class="card">
+      <h2>Connect</h2>
+      <p class="hint">Paste the pairing token from <span class="mono">cursor-chrome/bridge/.token</span>. Leave this blank to use the built-in token when one is set.</p>
+      <label for="token">Pairing token</label>
+      <input id="token" autocomplete="off" spellcheck="false" />
+      <p id="token-error" class="error"></p>
+      <button id="connect" type="button">Connect</button>
+    </section>
+
+    <section id="paired" class="card" hidden>
+      <p id="paired-text">Paired with the local bridge.</p>
+      <button id="disconnect" type="button" class="ghost">Disconnect</button>
+    </section>
+
+    <section class="card">
+      <h2>Active tab</h2>
+      <p id="tab-title">—</p>
+      <p id="tab-url" class="mono muted"></p>
+    </section>
+
+    <section class="card log-card">
+      <h2>Activity</h2>
+      <ol id="log"></ol>
+    </section>
+
+    <footer>
+      <button id="stop" type="button" class="danger" disabled>Stop</button>
+      <div class="footer-links">
+        <button id="options" type="button" class="link">Options</button>
+        <span id="shortcut" class="muted"></span>
+      </div>
+    </footer>
+    <script src="sidepanel.js"></script>
+  </body>
+</html>

@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cursor options</title>
+    <link rel="stylesheet" href="ui.css" />
+  </head>
+  <body>
+    <header class="top">
+      <span class="mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="18" height="18">
+          <path fill="currentColor" d="M4 2 L4 18 L9 14 L13 22 L16 20 L12 13 L19 13 Z"></path>
+        </svg>
+      </span>
+      <div>
+        <h1>Cursor options</h1>
+        <p class="status">Blocked URLs</p>
+      </div>
+    </header>
+
+    <section class="card">
+      <h2>Blocked URL patterns</h2>
+      <p class="hint">One pattern per line. A bare domain blocks the whole site. Use * as a wildcard, for example example.com/admin/*.</p>
+      <textarea id="patterns" spellcheck="false"></textarea>
+      <p id="saved" class="hint"></p>
+      <button id="save" type="button">Save patterns</button>
+    </section>
+    <script src="options.js"></script>
+  </body>
+</html>
