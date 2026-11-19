@@ -24,10 +24,11 @@
       <h2>Connect the bridge</h2>
       <ol class="steps">
         <li>Reload Cursor after the bridge is in MCP settings. Cursor starts it on <span class="mono">127.0.0.1:39221</span>.</li>
-        <li>Open <span class="mono">cursor-chrome/bridge/.token</span>. That file is the pairing token.</li>
+        <li>Open the <a class="token-link" href="http://127.0.0.1:39221/token" target="_blank" rel="noopener">token file</a> and copy the line.</li>
         <li>Paste the token below and click Connect.</li>
       </ol>
       <p class="hint">The bridge is the local link between Cursor and this extension. Cursor sends a command to the bridge, and the extension runs it in Chrome. The token is how they recognize each other.</p>
+      <p><a class="token-link" href="http://127.0.0.1:39221/token" target="_blank" rel="noopener">Open token file</a></p>
       <label for="token">Pairing token</label>
       <input id="token" type="text" autocomplete="off" spellcheck="false" placeholder="Paste the token from bridge/.token" />
       <p id="token-error" class="error"></p>

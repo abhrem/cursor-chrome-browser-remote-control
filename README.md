@@ -46,9 +46,10 @@ Nothing in this path is exposed on your LAN. Both sides have to be running on th
 
 The extension side panel is where you paste the token. Open it from the Cursor toolbar icon, or with Command+Shift+E on Mac and Ctrl+Shift+E elsewhere.
 
-1. Copy the entire line in `cursor-chrome/bridge/.token`.
-2. In the side panel, click **Paste**, or click the pairing-token field and paste with Command-V or Ctrl-V.
-3. Click **Connect**.
+1. In the side panel, click **Open token file**. That opens [http://127.0.0.1:39221/token](http://127.0.0.1:39221/token), which shows the line from `cursor-chrome/bridge/.token`. The bridge has to be running or the page will not load.
+2. On that page, click **Copy token**.
+3. Back in the side panel, click **Paste**, or click the pairing-token field and paste with Command-V or Ctrl-V.
+4. Click **Connect**.
 
 Chrome stores the token locally after that. The status changes from “Not connected” to “Connecting”, then “Connected” once the bridge answers. If the bridge token file is replaced later, click **Paste a new token**, paste the new line, and connect again.
 

@@ -174,8 +174,85 @@ function sendJson(res, status, body) {
   res.writeHead(status, {
     "content-type": "application/json; charset=utf-8",
     "content-length": Buffer.byteLength(data),
+    "cache-control": "no-store",
   });
   res.end(data);
+}
+
+function sendHtml(res, status, html) {
+  const data = Buffer.from(html);
+  res.writeHead(status, {
+    "content-type": "text/html; charset=utf-8",
+    "content-length": data.length,
+    "cache-control": "no-store",
+  });
+  res.end(data);
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
+}
+
+function localRequest(req) {
+  const host = String(req.headers.host || "").split(",")[0].trim().toLowerCase();
+  return host === `${HOST}:${PORT}` || host === `localhost:${PORT}`;
+}
+
+function tokenPage() {
+  const value = escapeHtml(token);
+  const file = escapeHtml(tokenPath);
+  return `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cursor Chrome pairing token</title>
+  <style>
+    body { margin: 0; background: #101010; color: #f3f3f1; font: 15px/1.45 ui-sans-serif, system-ui, sans-serif; }
+    main { max-width: 640px; margin: 0 auto; padding: 32px 20px; }
+    h1 { font-size: 20px; margin: 0 0 8px; }
+    p { color: #9a9a94; }
+    code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    pre { margin: 16px 0; padding: 14px; border: 1px solid #2e2e2e; border-radius: 10px; background: #171717; color: #f4f4f1; white-space: pre-wrap; overflow-wrap: anywhere; user-select: all; }
+    button { border: 0; border-radius: 8px; background: #f4f4f1; color: #141414; padding: 8px 14px; font: inherit; font-weight: 650; cursor: pointer; }
+    .path { font-size: 12px; overflow-wrap: anywhere; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Pairing token</h1>
+    <p>This is the line in <code>cursor-chrome/bridge/.token</code>. Copy it, then paste it into the Cursor side panel and click Connect.</p>
+    <pre id="token">${value}</pre>
+    <button id="copy" type="button">Copy token</button>
+    <p class="path">File on this computer: ${file}</p>
+  </main>
+  <script>
+    document.querySelector("#copy").addEventListener("click", async () => {
+      const button = document.querySelector("#copy");
+      const node = document.querySelector("#token");
+      const text = node.textContent.trim();
+      let copied = false;
+      try {
+        await navigator.clipboard.writeText(text);
+        copied = true;
+      } catch {}
+      if (!copied) {
+        const range = document.createRange();
+        range.selectNodeContents(node);
+        const selection = getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+        try { copied = document.execCommand("copy"); } catch {}
+      }
+      button.textContent = copied ? "Copied" : "Select the token and copy it";
+    });
+  </script>
+</body>
+</html>`;
 }
 
 function readBody(req, limit = 12_000_000) {
@@ -242,8 +319,16 @@ function handlePoll(req, res) {
 
 async function handleHttp(req, res) {
   const url = new URL(req.url || "/", `http://${HOST}:${PORT}`);
+  if (!localRequest(req)) {
+    sendJson(res, 403, { error: "localhost only" });
+    return;
+  }
   if (req.method === "GET" && url.pathname === "/health") {
     sendJson(res, 200, { ok: true, connected: extensionAlive() });
+    return;
+  }
+  if (req.method === "GET" && url.pathname === "/token") {
+    sendHtml(res, 200, tokenPage());
     return;
   }
   if (!authorized(req)) {

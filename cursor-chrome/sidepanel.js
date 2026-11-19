@@ -117,6 +117,16 @@ document.querySelector("#options").addEventListener("click", () => {
   chrome.runtime.openOptionsPage();
 });
 
+for (const link of document.querySelectorAll("a.token-link")) {
+  link.addEventListener("click", (event) => {
+    if (!globalThis.chrome?.tabs?.create) return;
+    event.preventDefault();
+    chrome.tabs.create({ url: link.href }).catch(() => {
+      window.open(link.href, "_blank", "noopener");
+    });
+  });
+}
+
 chrome.commands.getAll().then((commands) => {
   const command = commands.find((entry) => entry.name === "toggle-side-panel");
   document.querySelector("#shortcut").textContent = command?.shortcut || "";

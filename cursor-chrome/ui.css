@@ -77,6 +77,11 @@ p { margin: 0; }
 
 .steps li { margin: 0 0 6px; }
 .steps li:last-child { margin-bottom: 0; }
+
+a.token-link {
+  color: #f4f4f1;
+  font-weight: 650;
+}
 .error { min-height: 1.2em; color: #ffb4a8; font-size: 12px; }
 
 .mono {
