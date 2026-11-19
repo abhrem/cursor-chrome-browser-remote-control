@@ -21,17 +21,29 @@
     <p id="detail" class="detail"></p>
 
     <section id="setup" class="card">
-      <h2>Connect</h2>
-      <p class="hint">Paste the pairing token from <span class="mono">cursor-chrome/bridge/.token</span>. Leave this blank to use the built-in token when one is set.</p>
+      <h2>Connect the bridge</h2>
+      <ol class="steps">
+        <li>Reload Cursor after the bridge is in MCP settings. Cursor starts it on <span class="mono">127.0.0.1:39221</span>.</li>
+        <li>Open <span class="mono">cursor-chrome/bridge/.token</span>. That file is the pairing token.</li>
+        <li>Paste the token below and click Connect.</li>
+      </ol>
+      <p class="hint">The bridge is the local link between Cursor and this extension. Cursor sends a command to the bridge, and the extension runs it in Chrome. The token is how they recognize each other.</p>
       <label for="token">Pairing token</label>
-      <input id="token" autocomplete="off" spellcheck="false" />
+      <input id="token" type="text" autocomplete="off" spellcheck="false" placeholder="Paste the token from bridge/.token" />
       <p id="token-error" class="error"></p>
-      <button id="connect" type="button">Connect</button>
+      <div class="row">
+        <button id="paste" type="button" class="ghost">Paste</button>
+        <button id="connect" type="button">Connect</button>
+      </div>
     </section>
 
     <section id="paired" class="card" hidden>
       <p id="paired-text">Paired with the local bridge.</p>
-      <button id="disconnect" type="button" class="ghost">Disconnect</button>
+      <p class="hint">Cursor talks to the bridge on this computer. This extension picks up those commands and runs them in Chrome.</p>
+      <div class="row">
+        <button id="replace-token" type="button" class="ghost">Paste a new token</button>
+        <button id="disconnect" type="button" class="ghost">Disconnect</button>
+      </div>
     </section>
 
     <section class="card">

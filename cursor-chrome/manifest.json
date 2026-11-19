@@ -33,7 +33,8 @@
     "tabGroups",
     "alarms",
     "notifications",
-    "activeTab"
+    "activeTab",
+    "clipboardRead"
   ],
   "host_permissions": [
     "<all_urls>",

@@ -67,6 +67,16 @@ p { margin: 0; }
 .detail { min-height: 1.2em; color: #9a9a94; font-size: 13px; }
 .hint, .muted { color: #9a9a94; }
 .hint { margin-bottom: 8px; }
+
+.steps {
+  margin: 0 0 8px;
+  padding-left: 1.2em;
+  color: #c8c8c2;
+  font-size: 13px;
+}
+
+.steps li { margin: 0 0 6px; }
+.steps li:last-child { margin-bottom: 0; }
 .error { min-height: 1.2em; color: #ffb4a8; font-size: 12px; }
 
 .mono {

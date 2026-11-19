@@ -12,6 +12,17 @@ Search terms: Cursor Chrome remote control, Cursor browser automation, Claude in
 - Talks only to `127.0.0.1`. The bridge is not exposed on your network
 - Lets you block URL patterns. There is no per-site approval prompt after the extension is connected
 
+## How the bridge talks
+
+Cursor does not control Chrome by itself. A small local bridge sits between them.
+
+1. Cursor starts `cursor-chrome/bridge/server.mjs` from MCP settings. The bridge listens only on `127.0.0.1:39221`.
+2. The first run writes a pairing token to `cursor-chrome/bridge/.token`. That file is the shared secret. It is not in this repository.
+3. The Chrome extension long-polls the bridge. Cursor sends a browser command to the bridge, and the extension runs it in the open Chrome window.
+4. The token is how the extension and the bridge recognize each other. A command without that token is rejected.
+
+Nothing in this path is exposed on your LAN. Both sides have to be running on the same computer.
+
 ## Install
 
 1. Open `chrome://extensions`, turn on Developer mode, and choose **Load unpacked**.
@@ -29,16 +40,25 @@ Search terms: Cursor Chrome remote control, Cursor browser automation, Claude in
 }
 ```
 
-4. Reload Cursor so it starts the bridge. The first run writes a pairing token to `cursor-chrome/bridge/.token`.
-5. Open the extension side panel (Command+Shift+E on Mac, Ctrl+Shift+E elsewhere) and paste that token. Chrome stores it locally after that.
+4. Reload Cursor so it starts the bridge. Confirm `cursor-chrome/bridge/.token` exists. It is one line, 64 hex characters, and the file mode is `0600`.
 
-The token file is mode `0600` and is not part of this repository. Do not commit it.
+## Paste the token
+
+The extension side panel is where you paste the token. Open it from the Cursor toolbar icon, or with Command+Shift+E on Mac and Ctrl+Shift+E elsewhere.
+
+1. Copy the entire line in `cursor-chrome/bridge/.token`.
+2. In the side panel, click **Paste**, or click the pairing-token field and paste with Command-V or Ctrl-V.
+3. Click **Connect**.
+
+Chrome stores the token locally after that. The status changes from “Not connected” to “Connecting”, then “Connected” once the bridge answers. If the bridge token file is replaced later, click **Paste a new token**, paste the new line, and connect again.
+
+Leaving the field empty does not connect. The public extension does not ship a built-in token.
 
 ## Use it from Cursor
 
 Ask Cursor to open a page, read it, and act on it. The agent calls tools on the local bridge: list tabs, navigate, open a tab, snapshot, click, type, press keys, scroll, and screenshot.
 
-New tabs join an existing tab group named **Cursor** when one is already open. A new group is created only when none exists.
+You should see a “Cursor is working” indicator on the page, with a Stop button. New tabs join an existing tab group named **Cursor** when one is already open. A new group is created only when none exists.
 
 ## Limits
 

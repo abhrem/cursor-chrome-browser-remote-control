@@ -11,6 +11,8 @@ const stopBtn = document.querySelector("#stop");
 const tokenInput = document.querySelector("#token");
 const tokenError = document.querySelector("#token-error");
 const connectBtn = document.querySelector("#connect");
+const pasteBtn = document.querySelector("#paste");
+let replacingToken = false;
 
 const STATUS_LABELS = {
   connected: "Connected",
@@ -30,7 +32,7 @@ function render(state) {
   statusEl.textContent = STATUS_LABELS[status] || "Not connected";
   dotEl.dataset.state = status;
   detailEl.textContent = state.statusDetail || "";
-  const needsToken = !state.hasToken || status === "unauthorized" || status === "needs_token";
+  const needsToken = !state.hasToken || status === "unauthorized" || status === "needs_token" || replacingToken;
   setupEl.hidden = !needsToken;
   pairedEl.hidden = needsToken;
   pairedText.textContent = status === "connected"
@@ -60,13 +62,35 @@ async function refresh() {
   render(state);
 }
 
+pasteBtn.addEventListener("click", async () => {
+  tokenError.textContent = "";
+  try {
+    const text = (await navigator.clipboard.readText()).trim();
+    if (!text) throw new Error("empty");
+    tokenInput.value = text;
+    tokenInput.focus();
+  } catch {
+    tokenError.textContent = "Clipboard was blocked. Click the field and paste with Command-V or Ctrl-V.";
+    tokenInput.focus();
+  }
+});
+
 connectBtn.addEventListener("click", async () => {
   tokenError.textContent = "";
+  const token = tokenInput.value.trim();
+  if (!token) {
+    tokenError.textContent = "Paste the token from cursor-chrome/bridge/.token.";
+    tokenInput.focus();
+    return;
+  }
   connectBtn.disabled = true;
-  const response = await chrome.runtime.sendMessage({ type: "SAVE_TOKEN", token: tokenInput.value });
+  const response = await chrome.runtime.sendMessage({ type: "SAVE_TOKEN", token });
   connectBtn.disabled = false;
   if (!response?.ok) tokenError.textContent = response?.error || "Could not save the token";
-  else tokenInput.value = "";
+  else {
+    tokenInput.value = "";
+    replacingToken = false;
+  }
 });
 
 tokenInput.addEventListener("keydown", (event) => {
@@ -74,7 +98,15 @@ tokenInput.addEventListener("keydown", (event) => {
 });
 
 document.querySelector("#disconnect").addEventListener("click", () => {
+  replacingToken = false;
   chrome.runtime.sendMessage({ type: "DISCONNECT" });
+});
+
+document.querySelector("#replace-token").addEventListener("click", () => {
+  replacingToken = true;
+  tokenError.textContent = "";
+  refresh();
+  tokenInput.focus();
 });
 
 stopBtn.addEventListener("click", () => {
